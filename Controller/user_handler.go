@@ -25,7 +25,7 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	createdUser, err := h.userService.CreateUser(user.Name, user.Age, user.Email)
+	createdUser, err := h.userService.CreateUser(user.Name, user.Age, user.Email, user.College, user.Branch, user.Phone, user.Address, user.Language, user.Projects, user.About, user.Role)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -57,7 +57,7 @@ func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	updatedUser, err := h.userService.UpdateUser(id, user.Name, user.Age, user.Email)
+	updatedUser, err := h.userService.UpdateUser(id, user.Name, user.Age, user.Email, user.College, user.Branch, user.Phone, user.Address, user.Language, user.Projects, user.About, user.Role)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

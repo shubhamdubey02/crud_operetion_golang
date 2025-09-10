@@ -14,9 +14,12 @@ import (
 )
 
 type UserService interface {
-	CreateUser(name string, age int, email string) (models.Schema, error)
+	CreateUser(name string, age int, email string, college string, branch string, phone string, address string, language string, projects string, about string, role string) (models.Schema, error)
+
 	GetUser(id string) (models.Schema, error)
-	UpdateUser(id string, name string, age int, email string) (models.Schema, error)
+
+	UpdateUser(id string, name string, age int, email string, college string, branch string, phone string, address string, language string, projects string, about string, role string) (models.Schema, error)
+
 	DeleteUser(id string) error
 }
 
@@ -28,14 +31,22 @@ func NewUserService(collection *mongo.Collection) UserService {
 	return &userService{collection: collection}
 }
 
-func (s *userService) CreateUser(name string, age int, email string) (models.Schema, error) {
+func (s *userService) CreateUser(name string, age int, email string, college string, branch string, phone string, address string, language string, projects string, about string, role string) (models.Schema, error) {
 	user := models.Schema{
 		ID:        primitive.NewObjectID(),
 		Name:      name,
 		Age:       age,
 		Email:     email,
-		CreatedAt: models.GetISTTime(),
-		UpdatedAt: models.GetISTTime(),
+		College:   college,
+		Branch:    branch,
+		Phone:     phone,
+		Address:   address,
+		Language:  language,
+		Projects:  projects,
+		About:     about,
+		Role:      role,
+		CreatedAt: time.Now().UTC(),
+		UpdatedAt: time.Now().UTC(),
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -66,7 +77,7 @@ func (s *userService) GetUser(id string) (models.Schema, error) {
 	return user, nil
 }
 
-func (s *userService) UpdateUser(id string, name string, age int, email string) (models.Schema, error) {
+func (s *userService) UpdateUser(id string, name string, age int, email string, college string, branch string, phone string, address string, language string, projects string, about string, role string) (models.Schema, error) {
 	objectID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		return models.Schema{}, errors.New("invalid user ID")
@@ -80,6 +91,14 @@ func (s *userService) UpdateUser(id string, name string, age int, email string) 
 			"name":       name,
 			"age":        age,
 			"email":      email,
+			"college":    college,
+			"branch":     branch,
+			"phone":      phone,
+			"address":    address,
+			"language":   language,
+			"projects":   projects,
+			"about":      about,
+			"role":       role,
 			"updated_at": time.Now().UTC(),
 		},
 	}

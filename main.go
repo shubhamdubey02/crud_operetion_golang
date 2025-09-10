@@ -11,6 +11,7 @@ import (
 	"CRUD_operation/router"
 	"CRUD_operation/service"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -34,6 +35,30 @@ func main() {
 
 	db := client.Database("CrudOperationGolnag")
 	collection := db.Collection("users")
+	unsetFields := bson.M{
+		"About":    "",
+		"Address":  "",
+		"Branch":   "",
+		"College":  "",
+		"Language": "",
+		"Phone":    "",
+		"Projects": "",
+		"Role":     "",
+	}
+
+	update := bson.M{
+		"$unset": unsetFields,
+	}
+
+	result, err := collection.UpdateMany(ctx, bson.M{}, update)
+	if err != nil {
+		log.Fatal("UpdateMany error:", err)
+	}
+	if result.ModifiedCount > 0 {
+		fmt.Printf("Cleanup complete: %d documents updated\n", result.ModifiedCount)
+	} else {
+		fmt.Println("No old fields found, DB already clean")
+	}
 
 	userService := service.NewUserService(collection)
 	userHandler := Controller.NewUserHandler(userService)
