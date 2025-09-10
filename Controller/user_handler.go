@@ -6,6 +6,7 @@ import (
 
 	"CRUD_operation/models"
 	"CRUD_operation/service"
+	"CRUD_operation/validator"
 
 	"github.com/gorilla/mux"
 )
@@ -21,6 +22,11 @@ func NewUserHandler(userService service.UserService) *UserHandler {
 func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	var user models.Schema
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if err := validator.ValidateUser(user); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
